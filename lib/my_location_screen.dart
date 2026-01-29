@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_maps_app/app_colors.dart';
+import 'package:google_maps_app/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -35,35 +37,21 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
   }
 
   Future<void> _checkLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
+    bool hasPermission = await LocationService.checkLocationPermission();
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    if (!hasPermission) {
       _showPermissionDeniedDialog();
       return;
     }
 
-    _isLocationPermissionGranted =
-        permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse;
-
-    if (_isLocationPermissionGranted) {
-      _startRealTimeLocationUpdates();
-      await _getCurrentLocation();
-    }
+    _isLocationPermissionGranted = true;
+    await _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+    Position? position = await LocationService.getCurrentLocation();
+    if (position != null) {
       _updateLocation(position);
-    } catch (e) {
-      print('Error getting current location: $e');
     }
   }
 
@@ -157,10 +145,8 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
         Polyline(
           polylineId: const PolylineId('tracking_line'),
           points: _locationHistory,
-          color: Colors.blue,
+          color: AppColors.primary,
           width: 4,
-          startCap: Cap.roundCap,
-          endCap: Cap.roundCap,
         ),
       );
     }
