@@ -21,10 +21,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
   bool _isLocationPermissionGranted = false;
   bool _isFirstLocation = true;
 
-  // Location update interval (10 seconds as per requirement)
   static const Duration _locationUpdateInterval = Duration(seconds: 10);
-
-  // Timer for manual location updates (fallback)
   Timer? _locationUpdateTimer;
 
   @override
@@ -35,13 +32,10 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
 
   Future<void> _initializeLocationTracking() async {
     await _checkLocationPermission();
-
-    // Start periodic location updates as a fallback
     _startPeriodicLocationUpdates();
   }
 
   Future<void> _checkLocationPermission() async {
-    // Check location permission
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -49,7 +43,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Show dialog to open settings
       _showPermissionDeniedDialog();
       return;
     }
@@ -59,7 +52,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
 
     if (_isLocationPermissionGranted) {
       _startRealTimeLocationUpdates();
-      // Get initial location
       await _getCurrentLocation();
     }
   }
@@ -101,7 +93,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
   }
 
   void _startRealTimeLocationUpdates() {
-    // Start listening to position stream
     _positionStreamSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
@@ -113,7 +104,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
   }
 
   void _startPeriodicLocationUpdates() {
-    // As a fallback, also update location every 10 seconds
     _locationUpdateTimer = Timer.periodic(_locationUpdateInterval, (timer) async {
       if (_isLocationPermissionGranted) {
         await _getCurrentLocation();
@@ -128,16 +118,9 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
       _currentPosition = position;
       final LatLng newLocation = LatLng(position.latitude, position.longitude);
 
-      // Add to location history
       _locationHistory.add(newLocation);
-
-      // Update marker
       _updateMarker(newLocation);
-
-      // Update polyline
       _updatePolyline();
-
-      // Animate to location if it's the first update
       if (_isFirstLocation && _mapController != null) {
         _animateToLocation(newLocation);
         _isFirstLocation = false;
@@ -157,7 +140,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
           snippet: '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}',
         ),
         onTap: () {
-          // Info window is already configured to show on tap
         },
       ),
     );
@@ -235,7 +217,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
         children: [
           GoogleMap(
             initialCameraPosition: const CameraPosition(
-              target: LatLng(23.7216771, 90.4165835), // Default location from your image
+              target: LatLng(23.7216771, 90.4165835),
               zoom: 16.0,
             ),
             onMapCreated: (controller) {
@@ -244,7 +226,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
             markers: _markers,
             polylines: _polylines,
             myLocationEnabled: true,
-            myLocationButtonEnabled: false, // We'll use custom button
+            myLocationButtonEnabled: false,
             zoomControlsEnabled: true,
             mapType: MapType.normal,
             compassEnabled: true,
@@ -254,7 +236,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
             zoomGesturesEnabled: true,
           ),
 
-          // Location info panel
           Positioned(
             top: 16,
             left: 16,
@@ -336,7 +317,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
             ),
           ),
 
-          // Control buttons
           Positioned(
             bottom: 100,
             right: 16,
@@ -349,7 +329,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                         LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
                       );
                     } else {
-                      // Center on default location
                       _animateToLocation(const LatLng(23.7216771, 90.4165835));
                     }
                   },
@@ -383,7 +362,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
             ),
           ),
 
-          // Static locations list (from your image)
           Positioned(
             bottom: 200,
             left: 16,
@@ -443,7 +421,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
         ],
       ),
 
-      // Floating action button to center on location
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_currentPosition != null) {
@@ -451,14 +428,12 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
               LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
             );
           } else {
-            // For testing/demo: Use default location
             _animateToLocation(const LatLng(23.7216771, 90.4165835));
           }
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.gps_fixed, color: Colors.white),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
