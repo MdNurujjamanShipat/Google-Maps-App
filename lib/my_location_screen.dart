@@ -422,14 +422,15 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                   const SizedBox(height: 8),
 
                   SizedBox(
-                    height: 150,
+                    height: 50,
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          //_buildLocationItem('🏫', 'Shek Long Bangla/Baikia Mahavidyalaaya'),
-                          //_buildLocationItem('🛒', 'Peshwaian'),
-                          // _buildLocationItem('🛍️', 'Shwapno - Wari'),
-                          // _buildLocationItem('🍕', 'PizzaBurg Wari'),
+                          _buildLocationItem(
+                            '🏫',
+                            'Shek Long Bangla/Baikia Mahavidyalaaya',
+                          ),
+                          _buildLocationItem('🛒', 'Peshwaian'),
                         ],
                       ),
                     ),
@@ -503,12 +504,3 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
     );
   }
 }
-
-// completed 50 minutes.
-// user real time location monitor kora .
-// like user waking that user realtime location monitor kora.
-// oi user location latitude draw in google map . like it will be line type ,
-// like line type exam real google map location line type .
-//53 minutes video .
-//real time application taker use google map and gps service .
-// if you want then you can use intermideate type calculation kore firbase er modde rakte paren
