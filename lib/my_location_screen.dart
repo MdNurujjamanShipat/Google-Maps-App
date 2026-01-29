@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -47,7 +46,8 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
       return;
     }
 
-    _isLocationPermissionGranted = permission == LocationPermission.always ||
+    _isLocationPermissionGranted =
+        permission == LocationPermission.always ||
         permission == LocationPermission.whileInUse;
 
     if (_isLocationPermissionGranted) {
@@ -73,7 +73,9 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Location Permission Required'),
-          content: const Text('This app needs location permission to track your real-time location. Please enable it in settings.'),
+          content: const Text(
+            'This app needs location permission to track your real-time location. Please enable it in settings.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -93,18 +95,21 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
   }
 
   void _startRealTimeLocationUpdates() {
-    _positionStreamSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Update when moving 10 meters
-      ),
-    ).listen((Position position) {
-      _updateLocation(position);
-    });
+    _positionStreamSubscription =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 10, // Update when moving 10 meters
+          ),
+        ).listen((Position position) {
+          _updateLocation(position);
+        });
   }
 
   void _startPeriodicLocationUpdates() {
-    _locationUpdateTimer = Timer.periodic(_locationUpdateInterval, (timer) async {
+    _locationUpdateTimer = Timer.periodic(_locationUpdateInterval, (
+      timer,
+    ) async {
       if (_isLocationPermissionGranted) {
         await _getCurrentLocation();
       }
@@ -137,10 +142,10 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         infoWindow: InfoWindow(
           title: 'My Current Location',
-          snippet: '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}',
+          snippet:
+              '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}',
         ),
-        onTap: () {
-        },
+        onTap: () {},
       ),
     );
   }
@@ -165,10 +170,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
     if (_mapController != null) {
       _mapController.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: location,
-            zoom: 16.0,
-          ),
+          CameraPosition(target: location, zoom: 16.0),
         ),
       );
     }
@@ -258,7 +260,11 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.blue, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       const Text(
                         'Current Location',
@@ -271,7 +277,10 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                       const Spacer(),
                       if (_currentPosition != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.shade50,
                             borderRadius: BorderRadius.circular(10),
@@ -290,13 +299,28 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                   ),
                   const SizedBox(height: 8),
                   if (_currentPosition != null) ...[
-                    _buildInfoRow('Latitude:', _currentPosition!.latitude.toStringAsFixed(6)),
-                    _buildInfoRow('Longitude:', _currentPosition!.longitude.toStringAsFixed(6)),
-                    _buildInfoRow('Accuracy:', '±${_currentPosition!.accuracy.toStringAsFixed(1)}m'),
+                    _buildInfoRow(
+                      'Latitude:',
+                      _currentPosition!.latitude.toStringAsFixed(6),
+                    ),
+                    _buildInfoRow(
+                      'Longitude:',
+                      _currentPosition!.longitude.toStringAsFixed(6),
+                    ),
+                    _buildInfoRow(
+                      'Accuracy:',
+                      '±${_currentPosition!.accuracy.toStringAsFixed(1)}m',
+                    ),
                     if (_currentPosition!.speed > 0)
-                      _buildInfoRow('Speed:', '${_currentPosition!.speed.toStringAsFixed(1)} m/s'),
+                      _buildInfoRow(
+                        'Speed:',
+                        '${_currentPosition!.speed.toStringAsFixed(1)} m/s',
+                      ),
                     if (_locationHistory.length > 1)
-                      _buildInfoRow('Points tracked:', _locationHistory.length.toString()),
+                      _buildInfoRow(
+                        'Points tracked:',
+                        _locationHistory.length.toString(),
+                      ),
                   ] else ...[
                     const Text(
                       'Waiting for location...',
@@ -326,7 +350,10 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                   onPressed: () {
                     if (_currentPosition != null) {
                       _animateToLocation(
-                        LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                        LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        ),
                       );
                     } else {
                       _animateToLocation(const LatLng(23.7216771, 90.4165835));
@@ -339,9 +366,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                 const SizedBox(height: 8),
                 FloatingActionButton.small(
                   onPressed: () {
-                    _mapController.animateCamera(
-                      CameraUpdate.zoomIn(),
-                    );
+                    _mapController.animateCamera(CameraUpdate.zoomIn());
                   },
                   backgroundColor: Colors.white,
                   child: const Icon(Icons.add, color: Colors.blue),
@@ -350,9 +375,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                 const SizedBox(height: 8),
                 FloatingActionButton.small(
                   onPressed: () {
-                    _mapController.animateCamera(
-                      CameraUpdate.zoomOut(),
-                    );
+                    _mapController.animateCamera(CameraUpdate.zoomOut());
                   },
                   backgroundColor: Colors.white,
                   child: const Icon(Icons.remove, color: Colors.blue),
@@ -397,19 +420,16 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
+
                   SizedBox(
                     height: 150,
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          _buildLocationItem('🏫', 'Shek Long Bangla/Baikia Mahavidyalaaya'),
-                          _buildLocationItem('🛒', 'Peshwaian'),
-                          _buildLocationItem('🛍️', 'Shwapno - Wari'),
-                          _buildLocationItem('🍕', 'PizzaBurg Wari'),
-                          _buildLocationItem('🛍️', 'Aarong Wari'),
-                          _buildLocationItem('🌳', 'Bangathabaran Garden'),
-                          _buildLocationItem('🛕', 'Jai Kali Temple'),
-                          _buildLocationItem('🛒', 'Peshwarain'),
+                          //_buildLocationItem('🏫', 'Shek Long Bangla/Baikia Mahavidyalaaya'),
+                          //_buildLocationItem('🛒', 'Peshwaian'),
+                          // _buildLocationItem('🛍️', 'Shwapno - Wari'),
+                          // _buildLocationItem('🍕', 'PizzaBurg Wari'),
                         ],
                       ),
                     ),
@@ -455,10 +475,7 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -486,14 +503,6 @@ class _RealTimeTrackerScreenState extends State<RealTimeTrackerScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
 
 // completed 50 minutes.
 // user real time location monitor kora .
